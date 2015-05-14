@@ -39,6 +39,7 @@ def get_edge_from_nodes(current_node, next_node, graph):
 
     return next_node, current_node
 
+
 def get_next_nodes(current_node, graph):
     matching_nodes = []
     for edge in graph:
@@ -51,9 +52,12 @@ def get_next_nodes(current_node, graph):
 
 
 def remove_node(eulerian_path, current_node):
-    tmp = eulerian_path[::-1]
-    tmp.remove(current_node)
-    return tmp[::-1]
+    index = -1
+    for i in range(len(eulerian_path)):
+        if eulerian_path[i] == current_node:
+            index = i
+
+    del eulerian_path[index]
 
 
 def find_next(current_node, remaining_edges, eulerian_path):
@@ -62,20 +66,16 @@ def find_next(current_node, remaining_edges, eulerian_path):
         eulerian_path.append(current_node)
         return eulerian_path
 
-    print("current: ", current_node, " remaining: ", remaining_edges, " path:", eulerian_path)
     next_nodes = get_next_nodes(current_node, remaining_edges)
-    print("next_nodes of ", current_node, " are:", next_nodes, " while eulerian is ", eulerian_path)
     for next_node in next_nodes:
         eulerian_path.append(current_node)
         edge = get_edge_from_nodes(current_node, next_node, remaining_edges)
         remaining_edges.remove(edge)
-        # result = find_next(next_node, remaining_edges, eulerian_path)
         if find_next(next_node, remaining_edges, eulerian_path):
             return eulerian_path
-        eulerian_path = remove_node(eulerian_path, current_node)
+        remove_node(eulerian_path, current_node)
         remaining_edges.append(edge)
 
-    print("finished loop; sending back None. Path ", eulerian_path)
     return None
 
 
@@ -83,7 +83,6 @@ def find_eulerian_tour(graph):
     edges_num = count(graph)
 
     for node in edges_num.keys():
-        print("first node: ", node)
         tour = list(graph)
         eulerian_path = []
         if find_next(node, tour, eulerian_path):
@@ -99,7 +98,7 @@ test_set3 = [(1, 13), (1, 6), (6, 11), (3, 13), (8, 13), (0, 6), (8, 9), (5, 9),
 test_set4 = [(8, 16), (8, 18), (16, 17), (18, 19), (3, 17), (13, 17), (5, 13), (3, 4), (0, 18), (3, 14), (11, 14), (1, 8), (1, 9), (4, 12), (2, 19), (1, 10), (7, 9), (13, 15), (6, 12), (0, 1), (2, 11), (3, 18), (5, 6), (7, 15), (8, 13), (10, 17)]
 
 # print(count(test_set4))
-print("solution= ", find_eulerian_tour(test_set3))
+print("solution= ", find_eulerian_tour(test_set4))
 # print(find_eulerian_tour(test_set2))
 # print(find_eulerian_tour(test_set3))
 # print(find_eulerian_tour(test_set4))
